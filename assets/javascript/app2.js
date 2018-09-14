@@ -4,6 +4,6 @@ class Question {
         this.correctAnswer = correctAnswer;
         this.wrongAnswers = wrongAnswer;
         this.image = "assets/images/" + image;
+        this.time = 30;
     }
-    time = 30;
 }
