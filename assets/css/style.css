@@ -23,6 +23,38 @@ body {
     margin: 0 0 60px;
 }
 
-#question {
+#question, #start_over {
     font-size: 35px;
+}
+
+.answer, #start_over {
+    min-width: 60%;
+    display: inline-block;
+    margin: 0;
+    padding: 12px;
+}
+
+.answer:hover, #start_over:hover {
+    background-color: blue;
+    color: pink;
+}
+
+.missed_answer {
+    font-size: 26px;
+    margin: 4px;
+}
+
+#question.no_bottom_margin {
+    margin-bottom: 0;
+}
+
+#timer {
+    height: 34.4px;
+}
+
+#start_button {
+    font-size: 30px;
+    color: pink;
+    background-color: blue;
+    padding: 6px;
 }
