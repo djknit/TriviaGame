@@ -3,7 +3,6 @@ class Question {
         this.question = question;
         this.correctAnswer = correctAnswer;
         this.wrongAnswers = wrongAnswers;
-        this.image = "assets/images/" + image;
         this.time = 24;
     }
 
@@ -44,13 +43,9 @@ class Question {
 }
 
 var questions = [];
-questions.push(new Question("1: What is the answer to this question?", "A", ["B", "C", "D"], "388x291.png"));
-questions.push(new Question("2: What is the answer to this question?", "B", ["A", "C", "D"], "388x291.png"));
-questions.push(new Question("3: What is the answer to this question?", "C", ["B", "A", "D"], "388x291.png"));
-questions.push(new Question("4: What is the answer to this question?", "D", ["B", "C", "A"], "388x291.png"));
 
 var numberOfQuestions = 10;
-var category = 19;
+var category = 12;
 var difficulty = "medium";
 var queryURL = `https://opentdb.com/api.php?amount=${numberOfQuestions}&category=${category}&difficulty=${difficulty}&type=multiple`;
 
@@ -61,7 +56,7 @@ $.ajax({
     questions = [];
     for (var i = 0; i < numberOfQuestions; i++) {
         var result = response.results[i];
-        questions.push(new Question(result.question, result.correct_answer, result.incorrect_answers, "388x291.png"));
+        questions.push(new Question(result.question, result.correct_answer, result.incorrect_answers));
     }
 });
 
@@ -121,7 +116,7 @@ function outOfTime() {
     numUnanswered++;
     $("#question").html("You're out of time.").addClass("no_bottom_margin");
     $("#info_area").empty().append($("<p class='missed_answer'>The correct answer was " + questions[questionIndex].correctAnswer + ".</p>"));
-    displayImageAndMoveOn();
+    displayImageAndMoveOn(false);
 }
 
 function correctAnswer() {
@@ -129,7 +124,7 @@ function correctAnswer() {
     numCorrect++;
     $("#question").html("Correct!");
     $("#info_area").empty();
-    displayImageAndMoveOn();
+    displayImageAndMoveOn(true);
 }
 
 function wrongAnswer() {
@@ -137,16 +132,21 @@ function wrongAnswer() {
     numIncorrect++;
     $("#question").html("Wrong").addClass("no_bottom_margin");
     $("#info_area").empty().append($("<p class='missed_answer'>The correct answer was " + questions[questionIndex].correctAnswer + ".</p>"));
-    displayImageAndMoveOn();
+    displayImageAndMoveOn(false);
 }
 
 function stopTimer() {
     clearInterval(intervalId);
 }
 
-function displayImageAndMoveOn() {
+function displayImageAndMoveOn(isCorrect) {
     var image = $("<img>");
-    image.attr("src", questions[questionIndex].image);
+    if (isCorrect) {
+        image.attr("src", "assets/images/correct.gif");
+    }
+    else {
+        image.attr("src", "assets/images/incorrect.gif");
+    }
     $("#info_area").append(image);
     var timoutId = setTimeout(function() {
         if (questionIndex < questions.length - 1) {
