@@ -49,6 +49,23 @@ questions.push(new Question("2: What is the answer to this question?", "B", ["A"
 questions.push(new Question("3: What is the answer to this question?", "C", ["B", "A", "D"], "388x291.png"));
 questions.push(new Question("4: What is the answer to this question?", "D", ["B", "C", "A"], "388x291.png"));
 
+var numberOfQuestions = 10;
+var category = 19;
+var difficulty = "medium";
+var queryURL = `https://opentdb.com/api.php?amount=${numberOfQuestions}&category=${category}&difficulty=${difficulty}&type=multiple`;
+
+$.ajax({
+    url: queryURL,
+    method: "GET"
+}).then(function(response) {
+    questions = [];
+    for (var i = 0; i < numberOfQuestions; i++) {
+        var result = response.results[i];
+        questions.push(new Question(result.question, result.correct_answer, result.incorrect_answers, "388x291.png"));
+    }
+});
+
+
 var startButton = $("<button id='start_button'>Start Quiz</button>");
 
 var numCorrect;
@@ -57,6 +74,11 @@ var numUnanswered;
 var timeLeft;
 var questionIndex;
 
+$(document).ready(function() {
+    newGame();
+    $("#info_area").empty().append(startButton);
+});
+
 function newGame() {
     numCorrect = 0;
     numIncorrect = 0;
@@ -64,6 +86,8 @@ function newGame() {
     questionIndex = 0;
     $("#question").empty().removeClass("no_bottom_margin");
 }
+
+$(document).on("click", "#start_button", startQuiz);
 
 function startQuiz() {
     askQuestion(questions[0]);
@@ -88,20 +112,17 @@ function decrement() {
     }
 }
 
-function stopTimer() {
-    clearInterval(intervalId);
-}
-
-$(document).ready(function() {
-    newGame();
-    $("#info_area").empty().append(startButton);
-});
-
-$(document).on("click", "#start_button", startQuiz);
-
 $(document).on("click", ".correct_answer", correctAnswer);
 
 $(document).on("click", ".wrong_answer", wrongAnswer);
+
+function outOfTime() {
+    stopTimer();
+    numUnanswered++;
+    $("#question").html("You're out of time.").addClass("no_bottom_margin");
+    $("#info_area").empty().append($("<p class='missed_answer'>The correct answer was " + questions[questionIndex].correctAnswer + ".</p>"));
+    displayImageAndMoveOn();
+}
 
 function correctAnswer() {
     stopTimer();
@@ -119,12 +140,8 @@ function wrongAnswer() {
     displayImageAndMoveOn();
 }
 
-function outOfTime() {
-    stopTimer();
-    numUnanswered++;
-    $("#question").html("You're out of time.").addClass("no_bottom_margin");
-    $("#info_area").empty().append($("<p class='missed_answer'>The correct answer was " + questions[questionIndex].correctAnswer + ".</p>"));
-    displayImageAndMoveOn();
+function stopTimer() {
+    clearInterval(intervalId);
 }
 
 function displayImageAndMoveOn() {

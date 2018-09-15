@@ -7,7 +7,7 @@ body {
 
 #content_area {
     width: 940px;
-    height: 540px;
+    min-height: 550px;
     background-color: pink;
     margin-left: auto;
     margin-right: auto;
